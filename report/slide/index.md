@@ -176,6 +176,22 @@ Before the results, I want to thank the APNIC Foundation and the ISIF Asia Fund 
 
 ---
 
+## What Happens If They Go Dark?
+
+![h:550 contain Taiwan submarine cable status map after 20251227 earthquake](img/map-20260103.png)
+
+<!--
+Taiwan is an island society. More than 99 percent of our external traffic depends on submarine cables.
+
+Taiwan currently connects to the global Internet through 14 international submarine cables, with another 10 domestic cables linking its offshore islands.
+
+This map shows the cable status in early January, after earthquakes from December 25, 2025 to January 3, 2026.
+
+Six international cable systems, nearly half of Taiwan's systems, were damaged. Full repairs were not completed until May 2026.
+-->
+
+---
+
 ![bg right:38% contain](img/smc-peering-tw-2026-03-18-1822.png)
 
 ## Cables Are Already Failing
@@ -185,29 +201,37 @@ More than **99%** of Taiwan's external traffic depends on submarine cables.
 At least one cable is often under repair.
 
 <!--
-Taiwan is an island society. More than 99 percent of our external traffic depends on submarine cables.
-
 This chart shows the cable status over the past year.
 
 Cable failures are not rare. Taiwan is often in a state where at least one cable is under repair.
 
-Most of the time, users do not notice, because traffic can be rerouted. The real risk is clustered failure. If several cables fail at the same time, redundancy can disappear very quickly.
+Most of the time, users do not notice because traffic can be rerouted. But if several cables fail at the same time and redundancy is exhausted, critical services such as emergency information, payments, and communications may be disrupted.
+
+This brings us to the question: when international connectivity is severely reduced, which services can people still use?
 -->
 
 ---
 
-## What Happens If They Go Dark?
+## Overall Result: **89%** Need Attention
 
-![h:550 contain Taiwan submarine cable status map after 20251227 earthquake](img/map-20260103.png)
+![bg right:50% contain Overall result](img/overall-result.en.svg)
+
+| Category          | Sites  | Share |
+|-------------------|-------:|------:|
+| Foreign-dependent |    856 | 39% |
+| Cloud-dependent   |  1,080 | 50% |
+| Locally-contained |    243 | 11% |
 
 <!--
-This map shows the cable status in early January, after earthquakes from December 25, 2025 to January 3, 2026.
+We tested websites commonly used in Taiwan. The headline result is this: 88.8 percent of tested sites need attention.
 
-Six international cable systems, nearly half of Taiwan's systems, were damaged. Full repairs were not completed until May 2026.
+39.3 percent are foreign-dependent. They load at least one resource from outside Taiwan.
 
-So this is not just a theory. When international connectivity is badly reduced, the real question is: which services can people still use?
+49.6 percent are cloud-dependent. They look local in the beginning, but they rely on Taiwan nodes of multi-national cloud providers.
 
-If emergency information, payment, logistics, communication, or public services fail, a network problem becomes a social resilience problem. That is why we started looking at digital services from the user side.
+This does not mean they will all fail. It means we should verify them before a real outage.
+
+Next, I will explain what we tested and how we measured these dependencies.
 -->
 
 ---
@@ -226,15 +250,13 @@ Latest dataset:
 - Measurements collected **2026-07-21**
 
 <!--
-We tested websites commonly used in Taiwan. This is not the same as testing only Taiwanese websites.
+We test websites commonly used in Taiwan, not only Taiwanese websites. This includes global platforms, e-commerce, news, public services, and community sites that people in Taiwan often use.
 
-If people in Taiwan rely on Google, Gmail, social platforms, e-commerce, news, government services, or community sites, they are part of the resilience picture.
-
-The source lists produced 2,507 unique sites after deduplication. Of these, 2,179 sites, or 86.9 percent, were measured successfully.
+Our dataset contains 2,507 unique websites; 2,179, or 86.9 percent, were measured successfully.
 
 The ranking snapshots are from July 20, and measurements were collected on July 21, 2026.
 
-For now, the unit is the website homepage. It is not a full service test yet, but it gives us a repeatable starting point.
+For now, we test only each website's homepage. This is not a full service test, but it gives us a repeatable starting point.
 -->
 
 ---
@@ -250,13 +272,11 @@ For each site:
 5. Aggregate requests into dependency categories
 
 <!--
-For each site, we open the homepage with programmable Chromium and record what the page loads.
+For each site, we open the homepage in Chromium and record every network request generated during loading.
 
-Then we remove blob and unparsable requests, ad-related noise, and the excluded web-font host. Requests are deduplicated by hostname within each site.
+We remove requests that are not relevant to core functionality and deduplicate them by hostname. IPinfo then gives us a first estimate of each resource's location and network provider.
 
-IPinfo provides geolocation and ASN data. For six major clouds and CDNs with Taiwan edges, we use provider headers first, then the LACeS anycast census, then five pings. A minimum RTT below 15 milliseconds is treated as local.
-
-Finally, we classify the site by the risks we can observe from the homepage.
+Cloud and CDN endpoints are harder because their IP registration may not match where the resource is actually served. For six providers with Taiwan edge nodes, we verify location using response headers, then LACeS, and use RTT only as the final fallback.
 -->
 
 ---
@@ -272,33 +292,13 @@ Finally, we classify the site by the risks we can observe from the homepage.
 ![RTT fallback minimum latency distribution](../img/rtt-scatter-plot.en.svg)
 
 <!--
-RTT is our final location fallback, after IPinfo, provider headers, and LACeS. Of 19,046 observations, 3,640 entered this stage, and 3,064 returned measurements.
+Of 19,046 observations, 3,640 entered RTT fallback, and 3,064 returned measurements.
 
 Using our 15-millisecond cutoff, we identified 514 websites whose observed homepage resources were served from Taiwan cloud endpoints rather than abroad, reclassifying them from foreign-dependent to cloud-dependent.
 
-The result is stable across reasonable cutoffs. Compared with 15 milliseconds, 10 milliseconds changes 27 website classifications, while 20 milliseconds changes only five.
--->
+The overall result remains stable across the 10-, 15-, and 20-millisecond cutoffs.
 
----
-
-## Overall Result: **88.8%** Need Attention
-
-![bg right:50% contain Overall result](img/overall-result.en.svg)
-
-| Category          | Sites  | Share |
-|-------------------|-------:|------:|
-| Foreign-dependent |    856 | 39.3% |
-| Cloud-dependent   |  1,080 | 49.6% |
-| Locally-contained |    243 | 11.2% |
-
-<!--
-The headline result is this: 88.8 percent of tested sites need attention.
-
-39.3 percent are foreign-dependent. They load at least one resource from outside Taiwan.
-
-49.6 percent are cloud-dependent. They look local in the beginning, but they rely on Taiwan nodes of multi-national cloud providers.
-
-This does not mean they will all fail. It means we should verify them before a real outage.
+Finally, we aggregate the resource-level results and classify each website as foreign-dependent, cloud-dependent, or locally-contained.
 -->
 
 ---
@@ -316,9 +316,9 @@ Even if the homepage looks local -
 - Actual routing paths
 
 <!--
-Only 11.2 percent look locally contained from the homepage. But they also need care.
+To recap the overall picture, 39 percent are foreign-dependent, 50 percent are cloud-dependent, and only 11 percent are locally-contained.
 
-If a homepage loads all observed resources from Taiwan, that does not prove the whole service is local.
+But locally-contained only means that all observed homepage resources appear local. It does not prove that the whole service is local.
 
 The database may be outside Taiwan. The API may be outside Taiwan. Login, payment, search, forms, and mobile apps may use different paths.
 
@@ -342,15 +342,15 @@ Among **1,323** sites without observed foreign resources:
 Can local edges keep serving when Taiwan is isolated?
 
 <!--
-The cloud-dependent group is especially important. There are 1,323 websites without observed foreign resources: 1,080 are cloud-dependent and 243 are locally-contained.
+Now, let us look more closely at cloud-dependent sites. We observed no foreign requests from these sites, but they still rely on Taiwan nodes operated by multinational cloud and CDN providers.
 
-Among those 1,323 sites, 965 use Google Taiwan nodes, or 72.9 percent. Cloudflare appears on 480 sites, followed by Amazon, Akamai, Microsoft, and Fastly. Provider counts overlap because one site may use more than one provider.
+This reliance is highly concentrated. Google appears on 965 sites, or 72.9 percent, and Cloudflare on 480, followed by Amazon, Akamai, Microsoft, and Fastly. Because one site may use several providers, these counts overlap.
 
-Local cloud nodes are useful. They reduce latency and keep materials close to users.
+Local nodes are valuable: they reduce latency and keep resources close to users.
 
-But a local node does not always mean the service can run on its own. During an international outage, the result may depend on cache, origin servers, control planes, login systems, certificates, and provider plans.
+But a local node does not mean a service can operate independently. During an international outage, it may still depend on overseas origins, control planes, authentication, certificates, caches, and provider operations.
 
-So the real question is: can these seemingly localized services keep running when Taiwan is isolated?
+So the key question is: can these apparently localized services keep running if Taiwan is isolated?
 -->
 
 ---
@@ -380,11 +380,11 @@ So the real question is: can these seemingly localized services keep running whe
 - Only **39 sites (1.8%)** use foreign resources exclusively
 
 <!--
-This table shows two important points.
+To see the broader picture beyond local cloud nodes, we examined cloud usage across all measured websites, including both domestic and foreign endpoints. These tables show two important points.
 
-First, global-cloud use is widespread: 87.7 percent use at least one resource from a selected multinational cloud or CDN. The domestic and foreign figures overlap because a site can use both.
+First, global-cloud use is widespread: 87.7 percent use at least one resource from a multinational cloud or CDN. The domestic and foreign figures overlap because a site can use both.
 
-Localization already helps. Only 39 sites, or 1.8 percent, use foreign resources exclusively. Many websites, including foreign services, already serve resources from Taiwan.
+Localization already helps. Only 39 sites, or 1.8 percent, use foreign resources exclusively. Many websites, including foreign services, already serve resources from local.
 
 Second, provider behavior is very different. Some providers serve most observed resources from Taiwan nodes. Others have a much more mixed pattern.
 
@@ -531,6 +531,4 @@ This work started from g0v digital resilience hackathons, and we will continue t
 We will also be at APAN62 in Auckland in August. If you will be there, please come talk to us.
 
 Please follow our channels for project updates and Taiwan submarine cable news.
-
-And please stay for the next cable resilience panel. I will now hand over the stage to LuLu and our friends from CRC lab.
 -->
