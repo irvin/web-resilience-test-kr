@@ -107,7 +107,7 @@ section.tables-slide > ul {
 section.rtt-slide {
   display: grid;
   grid-template-columns: 42% minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   column-gap: 1.25rem;
   align-items: start;
 }
@@ -122,16 +122,9 @@ section.rtt-slide > ul {
   margin-top: 0.5rem;
 }
 
-section.rtt-slide > table {
-  grid-column: 1;
-  grid-row: 3;
-  width: 100%;
-  font-size: 0.72em;
-}
-
 section.rtt-slide > p:has(> img:only-child) {
   grid-column: 2;
-  grid-row: 2 / 4;
+  grid-row: 2;
   align-self: center;
   margin: 0;
 }
@@ -272,27 +265,18 @@ Finally, we classify the site by the risks we can observe from the homepage.
 
 <!-- _class: invert rtt-slide -->
 
-- **262,926** raw requests → **19,046** website-hostname observations
-- **3,640** observations entered RTT fallback; **3,064** returned RTTs
+- **RTT fallback:** **3,640 of 19,046** observations (19.1%); **3,064** returned measurements (84.2%)
+- **Website impact:** **2,394** RTTs below 15 ms shift **514 sites (23.6%) foreign → cloud**
+- **Stable across cutoffs:** vs. 15 ms, 10 ms shifts **27 sites (1.2%) cloud → foreign**; 20 ms shifts **5 (0.2%) foreign → cloud**
 
 ![RTT fallback minimum latency distribution](../img/rtt-scatter-plot.en.svg)
 
-| 15 ms cutoff      | Sites |
-|-------------------|------:|
-| Foreign-dependent | 856 (39.3%) |
-| Cloud-dependent   | 1,080 (49.6%) |
-| Locally-contained | 243 (11.2%) |
-
 <!--
-RTT is only the final fallback, and it applies only to selected multinational cloud and CDN endpoints that IPinfo initially locates outside Taiwan.
+RTT is our final location fallback, after IPinfo, provider headers, and LACeS. Of 19,046 observations, 3,640 entered this stage, and 3,064 returned measurements.
 
-We first inspect provider-specific headers. If they do not identify a Taipei node, we query LACeS. Only when neither method provides reliable evidence of a Taiwan endpoint do we ping the IP five times.
+Using our 15-millisecond cutoff, we identified 514 websites whose observed homepage resources were served from Taiwan cloud endpoints rather than abroad, reclassifying them from foreign-dependent to cloud-dependent.
 
-At that point, the resource is still classified as foreign. If its minimum RTT is below 15 milliseconds, we reclassify it as a domestic cloud endpoint. If the RTT is 15 milliseconds or higher, or the measurement fails, it remains foreign.
-
-Of 19,046 observations, 3,640, or 19.1 percent, entered this stage. We obtained numeric RTTs for 3,064 observations: 2,394 were below 15 milliseconds and were reclassified as domestic, while 670 remained foreign. Another 576 had no numeric result and also remained foreign. These are resource observations, not website counts.
-
-The headline result is stable. Changing the threshold from 15 milliseconds to 10 or 20 milliseconds changes only 32 website classifications in total. The locally-contained count does not change because RTT only locates resources already identified as multinational cloud or CDN infrastructure.
+The result is stable across reasonable cutoffs. Compared with 15 milliseconds, 10 milliseconds changes 27 website classifications, while 20 milliseconds changes only five.
 -->
 
 ---
