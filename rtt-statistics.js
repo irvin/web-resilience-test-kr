@@ -99,6 +99,7 @@ function collectRttStatistics(
 
     siteClassifications.push({
       siteKey,
+      withoutRtt: classifySiteAtThreshold(data, 0),
       classifications: Object.fromEntries(
         thresholds.map((threshold) => [
           threshold,
@@ -115,6 +116,19 @@ function collectRttStatistics(
   ).length;
   const atOrAboveBaseline = measuredObservations.length - belowBaseline;
   const baselineKey = String(baselineThreshold);
+  const withoutRttCounts = {
+    'foreign-dependent': 0,
+    'cloud-dependent': 0,
+    'locally-contained': 0,
+  };
+  let changedWithoutRtt = 0;
+  for (const site of siteClassifications) {
+    const classification = site.withoutRtt;
+    withoutRttCounts[classification] += 1;
+    if (classification !== site.classifications[baselineKey]) {
+      changedWithoutRtt += 1;
+    }
+  }
   const sensitivity = thresholds.map((threshold) => {
     const counts = {
       'foreign-dependent': 0,
@@ -160,6 +174,10 @@ function collectRttStatistics(
     belowBaseline,
     atOrAboveBaseline,
     baselineThreshold,
+    withoutRtt: {
+      counts: withoutRttCounts,
+      changedFromBaseline: changedWithoutRtt,
+    },
     thresholds,
     sensitivity,
     stableAcrossThresholds,
@@ -244,6 +262,14 @@ function renderRttSensitivityTsv(stats) {
       'changed_percent',
     ],
   ];
+  rows.push([
+    '0 (no RTT)',
+    stats.withoutRtt.counts['foreign-dependent'],
+    stats.withoutRtt.counts['cloud-dependent'],
+    stats.withoutRtt.counts['locally-contained'],
+    '-',
+    '-',
+  ]);
   for (const item of stats.sensitivity) {
     rows.push([
       item.threshold,

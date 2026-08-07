@@ -11,7 +11,7 @@ MozTW, Mozilla Taiwan Community ([moztw.org](https://moztw.org))
 ### Dates
 
 Published: 2026-05-22  
-Last Updated: 2026-07-23
+Last Updated: 2026-08-07
 
 ### Acknowledgments
 
@@ -381,13 +381,16 @@ Based on this distribution, we use a relatively conservative `< 15 ms` threshold
 
 ![RTT distribution](./img/rtt-scatter-plot.en.svg)
 
-Changing the threshold to 10 ms or 20 ms affects only 32 website classifications: at 10 ms, 27 sites move from cloud-dependent to foreign-dependent; at 20 ms, 5 move from foreign-dependent to cloud-dependent. The number of locally-contained sites is unchanged.
+Without RTT correction (equivalent to a 0 ms threshold), every resource entering RTT fallback retains its foreign classification, producing 1,370 foreign-dependent websites and 566 cloud-dependent websites. Applying the 15 ms threshold reclassifies 514 websites (23.6%) from foreign-dependent to cloud-dependent, resulting in 856 and 1,080 websites in the two categories, respectively.
 
-| RTT threshold | Foreign-dependent | Cloud-dependent | Locally-contained | Sites reclassified |
-|---------------|-------------------|-----------------|-------------------|--------------------|
-| 10 ms         | 883 (40.5%)       | 1,053 (48.3%)   | 243 (11.2%)       | 27 (1.2%)          |
-| 15 ms         | 856 (39.3%)       | 1,080 (49.6%)   | 243 (11.2%)       |                    |
-| 20 ms         | 851 (39.1%)       | 1,085 (49.8%)   | 243 (11.2%)       | 5 (0.2%)           |
+The table further tests sensitivity to the selected RTT threshold. Relative to the 15 ms baseline used in this study, a 10 ms threshold moves only 27 websites (1.2%) from cloud-dependent to foreign-dependent, while a 20 ms threshold moves only five websites (0.2%) from foreign-dependent to cloud-dependent. The locally-contained count is unchanged. The aggregate classification therefore differs only slightly across the 10, 15, and 20 ms thresholds.
+
+| RTT threshold | Foreign-dependent | Cloud-dependent | Sites reclassified vs. 15 ms |
+|---------------|-------------------|-----------------|------------------------------|
+| No RTT (0 ms) | 1,370 (62.9%)     | 566 (26.0%)     | —                            |
+| 10 ms         | 883 (40.5%)       | 1,053 (48.3%)   | 27 (1.2%)                    |
+| 15 ms         | 856 (39.3%)       | 1,080 (49.6%)   | —                            |
+| 20 ms         | 851 (39.1%)       | 1,085 (49.8%)   | 5 (0.2%)                     |
 
 ### Batch test flow
 
