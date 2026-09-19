@@ -4,4 +4,4 @@
 	branch = main
 [submodule "top-traffic-list-taiwan"]
 	path = top-traffic-list-taiwan
-	url = https://github.com/irvin/top-traffic-website-list-korea.git
+	url = git@github.com:web-resilience-test/top-traffic-website-list-korea.git
