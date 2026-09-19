@@ -61,13 +61,13 @@ const TARGET_CLOUD_ASNS = [
     'AS20473'    // Vultr / The Constant Company
 ];
 
-// Response headers to check (value containing TPE indicates Taiwan PoP)
+// Response headers to check (value containing ICN indicates Korea PoP)
 const CLOUD_HEADERS = [
     'cf-ray',           // Cloudflare
     'x-amz-cf-pop',     // AWS CloudFront
     'x-served-by',      // Fastly
     'x-azure-ref',      // Azure Front Door / Azure CDN
-    'x-msedge-ref'      // Microsoft Edge CDN (e.g. Bing; ref may contain TPE)
+    'x-msedge-ref'      // Microsoft Edge CDN (e.g. Bing; ref may contain ICN)
 ];
 
 // RTT test threshold (milliseconds)
@@ -245,7 +245,7 @@ function isLACeSConfidenceReliable(confidence) {
 }
 
 /**
- * Normalize LACeS API response; compute has_tw, has_taipei, site_count
+ * Normalize LACeS API response; compute has_kr, has_seoul, site_count
  * @param {Object} raw - raw LACeS API JSON
  * @returns {Object} object with derived fields
  */
@@ -255,12 +255,12 @@ function normalizeLACeSResponse(raw) {
     }
 
     const locations = Array.isArray(raw.locations) ? raw.locations : [];
-    const has_tw = locations.some(loc => loc?.country === 'TW');
-    const has_taipei = locations.some(loc => {
-        if (loc?.country !== 'TW') return false;
+    const has_kr = locations.some(loc => loc?.country === 'KR');
+    const has_seoul = locations.some(loc => {
+        if (loc?.country !== 'KR') return false;
         const city = (loc.city || '').toLowerCase();
         const id = (loc.id || '').toUpperCase();
-        return id === 'TPE' || city.includes('taipei');
+        return id === 'ICN' || city.includes('seoul');
     });
 
     const siteMetrics = [
@@ -275,8 +275,8 @@ function normalizeLACeSResponse(raw) {
 
     return {
         ...raw,
-        has_tw,
-        has_taipei,
+        has_kr,
+        has_seoul,
         site_count
     };
 }
@@ -290,8 +290,8 @@ function formatLACeSForLog(lacesResult) {
     }
 
     const locations = Array.isArray(lacesResult.locations) ? lacesResult.locations : [];
-    const tw_locations = locations
-        .filter(loc => loc?.country === 'TW')
+    const kr_locations = locations
+        .filter(loc => loc?.country === 'KR')
         .map(loc => ({
             city: loc.city ?? null,
             country: loc.country,
@@ -307,14 +307,14 @@ function formatLACeSForLog(lacesResult) {
         partial: lacesResult.partial,
         asns: lacesResult.asns,
         date: lacesResult.date,
-        has_tw: lacesResult.has_tw,
-        has_taipei: lacesResult.has_taipei,
+        has_kr: lacesResult.has_kr,
+        has_seoul: lacesResult.has_seoul,
         site_count: lacesResult.site_count,
         location_count: locations.length
     };
 
-    if (tw_locations.length > 0) {
-        log.tw_locations = tw_locations;
+    if (kr_locations.length > 0) {
+        log.kr_locations = kr_locations;
     }
 
     return log;
@@ -327,7 +327,7 @@ function buildLacesCloudProvider(lacesResult) {
     }
 
     return {
-        country: 'tw',
+        country: 'kr',
         detection_method: 'laces',
         laces
     };
@@ -1161,41 +1161,41 @@ function extractASN(org) {
 }
 
 /**
- * Whether response headers contain TPE (Taiwan PoP marker)
+ * Whether response headers contain ICN (Korea PoP marker)
  * @param {Object} headers - response headers
- * @returns {Object} { found, hasTPE, values }
+ * @returns {Object} { found, hasICN, values }
  */
 function checkCloudProviderHeaders(headers) {
     if (!headers || typeof headers !== 'object') {
-        return { found: false, hasTPE: false, values: {} };
+        return { found: false, hasICN: false, values: {} };
     }
 
     const values = {};
     let found = false;
-    let hasTPE = false;
+    let hasICN = false;
 
     for (const headerName of CLOUD_HEADERS) {
         const headerValue = headers[headerName] || headers[headerName.toLowerCase()];
         if (headerValue) {
             found = true;
             values[headerName] = headerValue;
-            // Case-insensitive TPE check
-            if (headerValue.toUpperCase().includes('TPE')) {
-                hasTPE = true;
+            // Case-insensitive ICN check
+            if (headerValue.toUpperCase().includes('ICN')) {
+                hasICN = true;
             }
         }
     }
 
-    return { found, hasTPE, values };
+    return { found, hasICN, values };
 }
 
 /**
- * Resolve cloud headers for a domain from HAR (including non-TPE hits, for logging)
- * @returns {{ foundTPE: boolean, headerValues: Object }}
+ * Resolve cloud headers for a domain from HAR (including non-ICN hits, for logging)
+ * @returns {{ foundICN: boolean, headerValues: Object }}
  */
 function resolveCloudHeadersForDomain(responseHeaders, domain, domainUrl) {
     if (!responseHeaders) {
-        return { foundTPE: false, headerValues: {} };
+        return { foundICN: false, headerValues: {} };
     }
 
     let logHeaderValues = {};
@@ -1204,8 +1204,8 @@ function resolveCloudHeadersForDomain(responseHeaders, domain, domainUrl) {
         const check = checkCloudProviderHeaders(responseHeaders.get(domainUrl));
         if (check.found) {
             logHeaderValues = check.values;
-            if (check.hasTPE) {
-                return { foundTPE: true, headerValues: check.values };
+            if (check.hasICN) {
+                return { foundICN: true, headerValues: check.values };
             }
         }
     }
@@ -1223,8 +1223,8 @@ function resolveCloudHeadersForDomain(responseHeaders, domain, domainUrl) {
             if (!check.found) {
                 continue;
             }
-            if (check.hasTPE) {
-                return { foundTPE: true, headerValues: check.values };
+            if (check.hasICN) {
+                return { foundICN: true, headerValues: check.values };
             }
             if (Object.keys(logHeaderValues).length === 0) {
                 logHeaderValues = check.values;
@@ -1234,7 +1234,7 @@ function resolveCloudHeadersForDomain(responseHeaders, domain, domainUrl) {
         }
     }
 
-    return { foundTPE: false, headerValues: logHeaderValues };
+    return { foundICN: false, headerValues: logHeaderValues };
 }
 
 function appendHeadersToCloudProvider(cloudProvider, headerValues) {
@@ -1305,8 +1305,8 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
         return apiResult;
     }
 
-    // country TW needs no further checks
-    if (apiResult.country === 'TW') {
+    // country KR needs no further checks
+    if (apiResult.country === 'KR') {
         return {
             ...apiResult,
             cloud_provider: null
@@ -1325,18 +1325,18 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
 
     const responseHeaders = options.responseHeaders || null;
     const domainUrl = options.domainUrl || null;
-    const { foundTPE, headerValues } = resolveCloudHeadersForDomain(
+    const { foundICN, headerValues } = resolveCloudHeadersForDomain(
         responseHeaders,
         domain,
         domainUrl
     );
 
     // Check headers
-    if (foundTPE) {
+    if (foundICN) {
         return {
             ...apiResult,
             cloud_provider: {
-                country: 'tw',
+                country: 'kr',
                 ...headerValues,
                 detection_method: 'header'
             }
@@ -1349,7 +1349,7 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
         debug: options.debug
     });
 
-    if (lacesResult?.has_tw && isLACeSConfidenceReliable(lacesResult.confidence)) {
+    if (lacesResult?.has_kr && isLACeSConfidenceReliable(lacesResult.confidence)) {
         return {
             ...apiResult,
             cloud_provider: appendHeadersToCloudProvider(
@@ -1359,16 +1359,16 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
         };
     }
 
-    // No TPE in headers; run RTT test
+    // No ICN in headers; run RTT test
     const rttResult = await performRTTTest(apiResult.ip);
     if (!rttResult.failed && rttResult.rtt !== null) {
         if (rttResult.rtt < RTT_THRESHOLD) {
-            // RTT < 15ms → treat as Taiwan
+            // RTT < 15ms → treat as Korea
             return {
                 ...apiResult,
                 cloud_provider: appendHeadersToCloudProvider(
                     appendLacesToCloudProvider({
-                        country: 'tw',
+                        country: 'kr',
                         rtt: rttResult.rtt,
                         detection_method: 'rtt'
                     }, lacesResult),
@@ -1376,7 +1376,7 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
                 )
             };
         } else {
-            // RTT >= 15ms → not Taiwan; record RTT without country
+            // RTT >= 15ms → not Korea; record RTT without country
             return {
                 ...apiResult,
                 cloud_provider: appendHeadersToCloudProvider(
@@ -1425,11 +1425,11 @@ function checkLocally(ipInfoResults, cloudProviderInfo) {
 
         // Prefer cloud_provider.country for domestic detection
         let isDomestic;
-        if (result.cloud_provider && result.cloud_provider.country === 'tw') {
-            // Taiwan confirmed via header, LACeS, or RTT
+        if (result.cloud_provider && result.cloud_provider.country === 'kr') {
+            // Korea confirmed via header, LACeS, or RTT
             isDomestic = true;
-        } else if (result.country === 'TW') {
-            // Taiwan from ipinfo directly
+        } else if (result.country === 'KR') {
+            // Korea from ipinfo directly
             isDomestic = true;
         } else {
             isDomestic = false;
