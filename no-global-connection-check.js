@@ -71,7 +71,7 @@ const CLOUD_HEADERS = [
 ];
 
 // RTT test threshold (milliseconds)
-const RTT_THRESHOLD = 15;
+const RTT_THRESHOLD = 20;
 
 // LACeS Anycast Census API
 const LACES_API_BASE = 'https://manycast.net/api/v1/ip';
@@ -1363,7 +1363,7 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
     const rttResult = await performRTTTest(apiResult.ip);
     if (!rttResult.failed && rttResult.rtt !== null) {
         if (rttResult.rtt < RTT_THRESHOLD) {
-            // RTT < 15ms → treat as Korea
+            // RTT < 20ms → treat as Korea
             return {
                 ...apiResult,
                 cloud_provider: appendHeadersToCloudProvider(
@@ -1376,7 +1376,7 @@ async function checkIPLocation(domain, customDNS = null, options = {}) {
                 )
             };
         } else {
-            // RTT >= 15ms → not Korea; record RTT without country
+            // RTT >= 20ms → not Korea; record RTT without country
             return {
                 ...apiResult,
                 cloud_provider: appendHeadersToCloudProvider(
