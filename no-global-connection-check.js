@@ -37,11 +37,11 @@ const DEFAULT_ADBLOCK_LISTS = [
 const CLOUD_PROVIDERS_DATA_PATH = path.join(
     __dirname,
     'top-traffic-list-korea',
-    'cloud_providers_tw.json'
+    'cloud_providers_kr.json'
 );
 let CLOUD_PROVIDER_INDEX = null;
 
-// Cloud provider ASNs that need further Taiwan-region detection
+// Cloud provider ASNs that need further Korea-region detection
 const TARGET_CLOUD_ASNS = [
     'AS15169',   // Google LLC
     'AS396982',  // Google LLC
@@ -54,7 +54,11 @@ const TARGET_CLOUD_ASNS = [
     'AS16625',   // Akamai Technologies, Inc.
     'AS20940',   // Akamai Technologies, Inc.
     'AS32787',   // Akamai Technologies, Inc.
-    'AS8075'    // Microsoft Azure
+    'AS8075',    // Microsoft Azure
+    'AS8068',    // Microsoft Corporation
+    'AS45102',   // Alibaba Cloud
+    'AS31898',   // Oracle Cloud
+    'AS20473'    // Vultr / The Constant Company
 ];
 
 // Response headers to check (value containing TPE indicates Taiwan PoP)
