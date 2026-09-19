@@ -1,15 +1,15 @@
 cff-version: 1.2.0
 message: "If you use this software, data, or report, please cite it as below."
-title: "web-resilience-test"
-abstract: "Tools and reports for measuring Taiwanese website resilience under international submarine-cable disruption scenarios."
+title: "web-resilience-test-kr"
+abstract: "Tools for measuring South Korean website resilience under international submarine-cable disruption scenarios."
 authors:
   - family-names: Chen
     given-names: Irvin
     orcid: "https://orcid.org/0009-0002-1059-7130"
     affiliation: "Open Culture Foundation"
     email: "irvin@ocf.tw"
-license: CC-BY-NC-ND-4.0
-repository-code: "https://github.com/irvin/web-resilience-test"
+license: CC0-1.0
+repository-code: "https://github.com/web-resilience-test/web-resilience-test-kr"
 url: "https://resilience.ocf.tw/web/"
 preferred-citation:
   type: report

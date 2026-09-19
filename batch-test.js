@@ -536,11 +536,11 @@ if (require.main === module) {
         console.log('  --help, -h             Show this help');
         console.log('');
         console.log('Examples:');
-        console.log('  node batch-test.js --limit 10 top-traffic-list-taiwan/merged_lists_tw.json');
-        console.log('  node batch-test.js --limit 50 --start-from 10 --delay 3000 top-traffic-list-taiwan/merged_lists_tw.json');
-        console.log('  node batch-test.js --limit 100 --dns 8.8.8.8 --ipinfo-token your_token top-traffic-list-taiwan/merged_lists_tw.json');
-        console.log('  node batch-test.js --debug --adblock-url https://filter.futa.gg/hosts_abp.txt --limit 10 top-traffic-list-taiwan/merged_lists_tw.json');
-        console.log('  node batch-test.js --clean-results --headless true top-traffic-list-taiwan/merged_lists_tw.json');
+  console.log('  node batch-test.js --limit 10 top-traffic-list-korea/merged_lists_kr.json');
+  console.log('  node batch-test.js --limit 50 --start-from 10 --delay 3000 top-traffic-list-korea/merged_lists_kr.json');
+  console.log('  node batch-test.js --limit 100 --dns 8.8.8.8 --ipinfo-token your_token top-traffic-list-korea/merged_lists_kr.json');
+  console.log('  node batch-test.js --debug --adblock-url https://filter.futa.gg/hosts_abp.txt --limit 10 top-traffic-list-korea/merged_lists_kr.json');
+  console.log('  node batch-test.js --clean-results --headless true top-traffic-list-korea/merged_lists_kr.json');
         process.exit(0);
     }
 

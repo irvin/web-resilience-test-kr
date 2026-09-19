@@ -4,11 +4,11 @@ For Traditional Chinese documentation, see [`README.zh-TW.md`](README.zh-TW.md).
 
 ###### tags: digital-resilience, 數位韌性松, DigiResiTh0n
 
-> License: [CC BY-NC-ND 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/) (see [LICENSE](LICENSE))
+> License: [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) (see [LICENSE](LICENSE))
 > 
 > [![Colloborate on HackMD](badge.svg)](https://g0v.hackmd.io/@irvin/digital-services-resilience)
 > 
-> [github archive](https://github.com/irvin/digital-service-resilience)
+> [GitHub repository](https://github.com/web-resilience-test/web-resilience-test-kr)
 
 ```
 Important online services that should keep operating as normally as possible when Taiwan loses external connectivity due to natural disasters or human-caused incidents.
@@ -117,11 +117,11 @@ Using a PChome product page `https://24h.pchome.com.tw/prod/DCAYAD-A900BIAMV` as
 
 ## d) Automated testing tool
 
-https://github.com/irvin/digital-service-resilience
+https://github.com/web-resilience-test/web-resilience-test-kr
 
 ### Installation
 ```bash
-git clone https://github.com/irvin/digital-service-resilience.git
+git clone https://github.com/web-resilience-test/web-resilience-test-kr.git
 cd digital-service-resilience
 npm install
 ```
@@ -238,7 +238,7 @@ Use `batch-test.js` to test many sites. The list must be JSON with `website`, `u
 
 #### Basic usage
 ```bash
-node batch-test.js --limit 10 top-traffic-list-taiwan/merged_lists_tw.json
+node batch-test.js --limit 10 top-traffic-list-korea/merged_lists_kr.json
 ```
 
 The test list file path must be the last CLI argument.
@@ -247,22 +247,22 @@ The test list file path must be the last CLI argument.
 
 - **Limit count**:
 ```bash
-node batch-test.js --limit 50 top-traffic-list-taiwan/merged_lists_tw.json
+node batch-test.js --limit 50 top-traffic-list-korea/merged_lists_kr.json
 ```
 
 - **Start from offset**:
 ```bash
-node batch-test.js --limit 50 --start-from 10 top-traffic-list-taiwan/merged_lists_tw.json
+node batch-test.js --limit 50 --start-from 10 top-traffic-list-korea/merged_lists_kr.json
 ```
 
 - **Request delay** (milliseconds):
 ```bash
-node batch-test.js --delay 3000 --limit 10 top-traffic-list-taiwan/merged_lists_tw.json
+node batch-test.js --delay 3000 --limit 10 top-traffic-list-korea/merged_lists_kr.json
 ```
 
 - **Combine options** (supports all single-site flags):
 ```bash
-node batch-test.js --debug --adblock-url https://filter.futa.gg/hosts_abp.txt --adblock false --cache false --limit 10 --delay 2000 top-traffic-list-taiwan/merged_lists_tw.json
+node batch-test.js --debug --adblock-url https://filter.futa.gg/hosts_abp.txt --adblock false --cache false --limit 10 --delay 2000 top-traffic-list-korea/merged_lists_kr.json
 ```
 
 **Batch-supported flags** (same as single-site):
@@ -337,7 +337,7 @@ node generate_statistic.js
 **Notes:**
 - Reads all JSON under `test-results/`
 - Creates/updates `test-results/statistic.tsv`
-- Sort order follows `top-traffic-list-taiwan/merged_lists_tw.json`; sites not in the list are appended
+- Sort order follows `top-traffic-list-korea/merged_lists_kr.json`; sites not in the list are appended
 
 ### Supplement: ASN / public cloud Taiwan node stats
 
@@ -421,7 +421,7 @@ Sites not in the automatic list can be added in `manual_curated_list_tw.json`:
 
 1. **Filenames:** derived from the URL (usually strips `https://` and trailing `/`, replaces `/` with `_`)
 2. **Re-runs:** a new run overwrites the previous file for the same site
-3. **Statistic order:** `generate_statistic.js` prefers `merged_lists_tw.json` order; others append at the end
+3. **Statistic order:** `generate_statistic.js` prefers `merged_lists_kr.json` order; others append at the end
 4. **Submodule:** if `test-results/` is its own repo, commit/push there separately
 5. **Public site:** updating `statistic.tsv` does not update the public site—you must rebuild/deploy in `web-resilience-test-profile`
 
@@ -446,11 +446,9 @@ api.example.com: X (US (Amazon))
 
 ## 📜 License
 
-During the ISIF research project (through 31 December 2026), this project is licensed under [CC BY-NC-ND 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/) (Attribution—NonCommercial—NoDerivatives 4.0).
+This project is dedicated to the public domain under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/), to the extent permitted by law.
 
-After 31 December 2026, project data and scripts will be released to the public domain. For uses beyond CC BY-NC-ND 4.0 during the research period, contact Irvin Chen (Open Culture Foundation; ORCID: [https://orcid.org/0009-0002-1059-7130](https://orcid.org/0009-0002-1059-7130)): irvin@ocf.tw (cc hi@ocf.tw).
-
-Full terms and suggested attribution are in [LICENSE](LICENSE). See also [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata.
+See [LICENSE](LICENSE) for the dedication and legal-code link. See also [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata.
 
 ## 🙏 Acknowledgments
 

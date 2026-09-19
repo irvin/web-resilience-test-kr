@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/irvin/digital-service-resilience"
+    "url": "https://github.com/web-resilience-test/web-resilience-test-kr"
   },
-  "license": "CC BY-NC-ND-4.0"
+  "license": "CC0-1.0"
 }

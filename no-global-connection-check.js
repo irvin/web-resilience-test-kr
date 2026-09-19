@@ -36,7 +36,7 @@ const DEFAULT_ADBLOCK_LISTS = [
 
 const CLOUD_PROVIDERS_DATA_PATH = path.join(
     __dirname,
-    'top-traffic-list-taiwan',
+    'top-traffic-list-korea',
     'cloud_providers_tw.json'
 );
 let CLOUD_PROVIDER_INDEX = null;

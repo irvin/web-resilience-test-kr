@@ -29,8 +29,8 @@ const MANUSCRIPT_FIGURES_DIR = path.resolve(
 );
 const MERGED_LISTS_PATH = path.resolve(
   __dirname,
-  'top-traffic-list-taiwan',
-  'merged_lists_tw.json',
+  'top-traffic-list-korea',
+  'merged_lists_kr.json',
 );
 
 // Normalize URL for comparison (strip protocol, trailing slash, www., lowercase)
@@ -899,7 +899,7 @@ async function main() {
   const reportDate = parseReportDate();
   const dataCutoffDate = parseDataCutoffDate(args);
 
-  // Load merged_lists_tw.json for sort order
+  // Load merged_lists_kr.json for sort order
   const orderMap = new Map();
   const orderedUrls = [];
   try {
@@ -916,7 +916,7 @@ async function main() {
     });
   } catch (err) {
     console.error(
-      `Failed to read merged_lists_tw.json: ${err.message}; falling back to filename sort`,
+      `Failed to read merged_lists_kr.json: ${err.message}; falling back to filename sort`,
     );
   }
 
@@ -981,7 +981,7 @@ async function main() {
     });
   }
 
-  // Sort by merged_lists_tw.json order
+  // Sort by merged_lists_kr.json order
   const sortedData = orderedUrls
     .filter((normalizedUrl) => dataMap.has(normalizedUrl))
     .map((normalizedUrl) => dataMap.get(normalizedUrl));
